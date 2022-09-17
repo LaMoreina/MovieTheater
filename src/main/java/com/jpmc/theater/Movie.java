@@ -35,6 +35,7 @@ public class Movie {
         return ticketPrice - getDiscount(showing.getSequenceOfTheDay());
     }
 
+    //todo: edge cases with negative values need to be handled in logic!
     private double getDiscount(int showSequence) {
         double specialDiscount = 0;
         if (MOVIE_CODE_SPECIAL == specialCode) {
