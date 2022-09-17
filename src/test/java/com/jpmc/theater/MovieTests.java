@@ -14,42 +14,42 @@ public class MovieTests {
 
     @Test
     void calculateTicketPrice_specialMovieWith20PercentDiscount_SpecialDiscountApplied() {
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),12.5, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),12.5, true);
         Showing showing = new Showing(spiderMan, 5, LocalDateTime.of(LocalDate.now(), LocalTime.now()));
         assertEquals(10, spiderMan.calculateTicketPrice(showing));
     }
 
     @Test
     void calculateTicketPrice_firstMovieNotSpecialMovie_threeDollarDiscountApplied() {
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),12.5, 0);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),12.5, false);
         Showing showing = new Showing(spiderMan, 1, LocalDateTime.of(LocalDate.now(), LocalTime.now()));
         assertEquals(9.5, spiderMan.calculateTicketPrice(showing));
     }
 
     @Test
     void calculateTicketPrice_firstMovieAndSpecialMovieExpensiveTicket_SpecialDiscountApplied() {
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),1200, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),1200, true);
         Showing showing = new Showing(spiderMan, 1, LocalDateTime.of(LocalDate.now(), LocalTime.now()));
         assertEquals((1200 * .8), spiderMan.calculateTicketPrice(showing));
     }
 
     @Test
     void calculateTicketPrice_firstMovieAndSpecialMovieInexpensiveTicket_SequenceDiscountApplied() {
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),10, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),10, true);
         Showing showing = new Showing(spiderMan, 1, LocalDateTime.of(LocalDate.now(), LocalTime.now()));
         assertEquals(7, spiderMan.calculateTicketPrice(showing));
     }
 
     @Test
     void calculateTicketPrice_secondMovieAndSpecialMovieInexpensiveTicket_SequenceDiscountApplied() {
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),10, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),10, true);
         Showing showing = new Showing(spiderMan, 2, LocalDateTime.of(LocalDate.now(), LocalTime.now()));
         assertEquals(8, spiderMan.calculateTicketPrice(showing));
     }
 
     @Test
     void calculateTicketPrice_secondMovieAndSpecialMovieExpensiveTicket_SpecialDiscountApplied() {
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),1200, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),1200, true);
         Showing showing = new Showing(spiderMan, 2, LocalDateTime.of(LocalDate.now(), LocalTime.now()));
         assertEquals((1200 * .8), spiderMan.calculateTicketPrice(showing));
     }
@@ -61,7 +61,7 @@ public class MovieTests {
         LocalTime time = LocalTime.of(11, 00);
         LocalDateTime localDateTime = LocalDateTime.of(todaysDate, time);
 
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),1200, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),1200, true);
         Showing showing = new Showing(spiderMan, 1, localDateTime);
         assertEquals((1200 * .75), spiderMan.calculateTicketPrice(showing));
     }
@@ -73,7 +73,7 @@ public class MovieTests {
         LocalTime time = LocalTime.of(11, 00);
         LocalDateTime localDateTime = LocalDateTime.of(todaysDate, time);
 
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),10, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),10, true);
         Showing showing = new Showing(spiderMan, 1, localDateTime);
         assertEquals(7, spiderMan.calculateTicketPrice(showing));
     }
@@ -85,7 +85,7 @@ public class MovieTests {
         LocalTime time = LocalTime.of(10, 59);
         LocalDateTime localDateTime = LocalDateTime.of(todaysDate, time);
 
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),10, 0);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),10, false);
         Showing showing = new Showing(spiderMan, 8, localDateTime);
         assertEquals(9, spiderMan.calculateTicketPrice(showing));
     }
@@ -97,7 +97,7 @@ public class MovieTests {
         LocalTime time = LocalTime.of(10, 59);
         LocalDateTime localDateTime = LocalDateTime.of(todaysDate, time);
 
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),10, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),10, true);
         Showing showing = new Showing(spiderMan, 8, localDateTime);
         assertEquals(8, spiderMan.calculateTicketPrice(showing));
     }
@@ -109,7 +109,7 @@ public class MovieTests {
         LocalTime time = LocalTime.of(10, 59);
         LocalDateTime localDateTime = LocalDateTime.of(todaysDate, time);
 
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),3, 1);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),3, true);
         Showing showing = new Showing(spiderMan, 8, localDateTime);
         assertEquals(2, spiderMan.calculateTicketPrice(showing));
     }
@@ -121,7 +121,7 @@ public class MovieTests {
         LocalTime time = LocalTime.of(10, 59);
         LocalDateTime localDateTime = LocalDateTime.of(todaysDate, time);
 
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", Duration.ofMinutes(90),10, 0);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),10, false);
         Showing showing = new Showing(spiderMan, 8, localDateTime);
         assertEquals(10, spiderMan.calculateTicketPrice(showing));
     }

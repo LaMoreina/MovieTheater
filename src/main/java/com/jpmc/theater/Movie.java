@@ -4,16 +4,16 @@ import java.time.Duration;
 import java.util.Objects;
 
 public class Movie {
-    private static int MOVIE_CODE_SPECIAL = 1;
 
     private String title;
     private String description;
     private Duration runningTime;
     private double ticketPrice;
-    private int specialCode;
+    private boolean specialCode;
 
-    public Movie(String title, Duration runningTime, double ticketPrice, int specialCode) {
+    public Movie(String title, String description, Duration runningTime, double ticketPrice, boolean specialCode) {
         this.title = title;
+        this.description = description;
         this.runningTime = runningTime;
         this.ticketPrice = ticketPrice;
         this.specialCode = specialCode;
@@ -38,7 +38,7 @@ public class Movie {
     //todo: edge cases with negative values need to be handled in logic!
     private double getDiscount(int showSequence) {
         double specialDiscount = 0;
-        if (MOVIE_CODE_SPECIAL == specialCode) {
+        if (specialCode) {
             specialDiscount = ticketPrice * 0.2;  // 20% discount for special movie
         }
 
