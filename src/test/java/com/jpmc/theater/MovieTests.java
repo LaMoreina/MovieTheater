@@ -67,6 +67,18 @@ public class MovieTests {
     }
 
     @Test
+    void calculateTicketPrice_firstMovieAndSpecialMovieExpensiveTicketMatineeCloseWindow_MatineeDiscountApplied() {
+
+        LocalDate todaysDate = LocalDate.now();
+        LocalTime time = LocalTime.of(16, 00);
+        LocalDateTime localDateTime = LocalDateTime.of(todaysDate, time);
+
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", null, Duration.ofMinutes(90),1200, true);
+        Showing showing = new Showing(spiderMan, 1, localDateTime);
+        assertEquals((1200 * .75), spiderMan.calculateTicketPrice(showing));
+    }
+
+    @Test
     void calculateTicketPrice_firstMovieAndSpecialMovieInexpensiveTicketMatineeWindow_SequenceDiscountApplied() {
 
         LocalDate todaysDate = LocalDate.now();
