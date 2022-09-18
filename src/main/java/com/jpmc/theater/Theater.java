@@ -1,5 +1,12 @@
 package com.jpmc.theater;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -67,8 +74,46 @@ public class Theater {
         }
     }
 
+    //I chose to output the JSON to the console and not a separate file
+    //File file = new File("./schedule.json");
+    //scheduleJSON = objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, theater.schedule);
+    private void printScheduleJSON() {
+//        Theater theater = new Theater(LocalDateProvider.singleton());
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String scheduleJSON = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.schedule);
+            System.out.println(scheduleJSON);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void printScheduleWithFormat(String format) {
+        if(format.equalsIgnoreCase(ScheduleFormat.Enum.JSON.toString())) {
+            printScheduleJSON();
+        } else if (format.equalsIgnoreCase(ScheduleFormat.Enum.PLAINTEXT.toString())) {
+            printSchedule();
+        }
+    }
+
+    public static class ScheduleFormat {
+        enum Enum {
+            JSON, PLAINTEXT
+        }
+    }
+
     public static void main(String[] args) {
         Theater theater = new Theater(LocalDateProvider.singleton());
-        theater.printSchedule();
+
+        BufferedReader reader  = new BufferedReader(new InputStreamReader((System.in)));
+        System.out.println("Enter desired schedule format (JSON, PLAINTEXT)");
+        try {
+            String outputFormat = reader.readLine();
+            theater.printScheduleWithFormat(outputFormat);
+        } catch(IOException e) {
+            e.getMessage();
+        }
+
+
     }
 }
