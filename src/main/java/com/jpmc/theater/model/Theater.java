@@ -1,10 +1,9 @@
-package com.jpmc.theater;
+package com.jpmc.theater.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Duration;
@@ -17,6 +16,8 @@ public class Theater {
 
     LocalDateProvider provider;
     private List<Showing> schedule;
+    private static final int MAXIMUM_SEATING_CAPACITY = 25; //todo: put this in properties.yml
+    private static int currentSeatingCapacity = 25; //todo: put this in properties.yml
 
     public Theater(LocalDateProvider provider) {
         this.provider = provider;
@@ -37,15 +38,24 @@ public class Theater {
         );
     }
 
-    public Reservation reserve(Customer customer, int sequence, int howManyTickets) {
-        Showing showing;
-        try {
-            showing = schedule.get(sequence - 1);
-        } catch (RuntimeException ex) {
-            ex.printStackTrace();
-            throw new IllegalStateException("not able to find any showing for given sequence " + sequence);
-        }
-        return new Reservation(customer, showing, howManyTickets);
+    public List<Showing> getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(List<Showing> schedule) {
+        this.schedule = schedule;
+    }
+
+    public static int getCurrentSeatingCapacity() {
+        return currentSeatingCapacity;
+    }
+
+    public static void setCurrentSeatingCapacity(int currentSeatingCapacity) {
+        Theater.currentSeatingCapacity = currentSeatingCapacity;
+    }
+
+    public Theater(List<Showing> schedule) {
+        this.schedule = schedule;
     }
 
     public void printSchedule() {
@@ -74,9 +84,9 @@ public class Theater {
         }
     }
 
-    //I chose to output the JSON to the console and not a separate file
-    //File file = new File("./schedule.json");
-    //scheduleJSON = objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, theater.schedule);
+    /** I chose to output the JSON to the console and not a separate file
+    File file = new File("./schedule.json");
+    scheduleJSON = objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, theater.schedule); */
     private void printScheduleJSON() {
 //        Theater theater = new Theater(LocalDateProvider.singleton());
         ObjectMapper objectMapper = new ObjectMapper();
@@ -113,7 +123,5 @@ public class Theater {
         } catch(IOException e) {
             e.getMessage();
         }
-
-
     }
 }
