@@ -18,9 +18,9 @@ public class TheaterTest {
 //        assertEquals(reservation.totalFee(), 50);
 //    }
 
-    @Test
-    void printMovieSchedule() {
-        Theater theater = new Theater(LocalDateProvider.singleton());
-        theater.printSchedule();
-    }
+//    @Test
+//    void printMovieSchedule() {
+//        Theater theater = new Theater(LocalDateProvider.singleton());
+//        theater.printSchedule();
+//    }
 }

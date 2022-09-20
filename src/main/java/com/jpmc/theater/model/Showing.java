@@ -25,10 +25,6 @@ public class Showing {
         return this.sequenceOfTheDay == sequence;
     }
 
-    public double getMovieFee() {
-        return movie.getTicketPrice();
-    }
-
     public int getSequenceOfTheDay() {
         return sequenceOfTheDay;
     }

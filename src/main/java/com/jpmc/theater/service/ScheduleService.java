@@ -1,7 +1,6 @@
 package com.jpmc.theater.service;
 
-public class ScheduleService implements ScheduleServiceImpl {
-
+public class ScheduleService {
 
     private void printSchedule() {}
 

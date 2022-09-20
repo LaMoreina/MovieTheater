@@ -1,5 +1,7 @@
 package com.jpmc.theater.model;
 
+import org.javamoney.moneta.Money;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +13,7 @@ public class Reservation {
     private Customer customer;
     private Showing showing;
     private List<Ticket> tickets;
-    private double totalFee;
+    private Money totalFee;
 
     public Reservation(Customer customer, Showing showing, List<Ticket> tickets) {
         this.reservationId = UUID.randomUUID();
@@ -21,10 +23,10 @@ public class Reservation {
         this.totalFee = calculateTotalFee();
     }
 
-    private double calculateTotalFee() {
-        return showing.getMovieFee() * tickets.size();
+    private Money calculateTotalFee() {
+        return showing.getMovie().getTicketPrice().multiply(tickets.size());
     }
-    public double getTotalFee() {
+    public Money getTotalFee() {
         return totalFee;
     }
 

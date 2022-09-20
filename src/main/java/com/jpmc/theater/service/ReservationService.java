@@ -1,15 +1,19 @@
 package com.jpmc.theater.service;
 
 import com.jpmc.theater.model.*;
+import org.javamoney.moneta.Money;
 
+import javax.money.CurrencyUnit;
+import javax.money.Monetary;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
 
-public class ReservationService implements ReservationServiceImpl {
+public class ReservationService {
     private Theater theater;
+    private static final CurrencyUnit USD = Monetary.getCurrency("USD");
 
-    public ReservationService (Theater theater){
+    public ReservationService(Theater theater){
         this.theater = theater;
     }
 
@@ -31,8 +35,10 @@ public class ReservationService implements ReservationServiceImpl {
             Customer customer = new Customer(customerName);
 
             //calculate discount and make sure no negative balance occurs such that the theater never "owes" the customer money
-            double calculateTicketPriceWithAnyDiscount = showing.getMovie().getTicketPrice() - getDiscount(showing);
-            calculateTicketPriceWithAnyDiscount = (calculateTicketPriceWithAnyDiscount) >= 0 ? calculateTicketPriceWithAnyDiscount : 0;
+            Money calculateTicketPriceWithAnyDiscount = showing.getMovie().getTicketPrice().subtract(getDiscount(showing));
+            calculateTicketPriceWithAnyDiscount =
+                    (calculateTicketPriceWithAnyDiscount).isGreaterThanOrEqualTo(Money.of(0, USD)) ?
+                            calculateTicketPriceWithAnyDiscount : Money.of(0, USD);
 
             for (int i = 0; i < howManyTickets; i++) {
                 Ticket ticket = new Ticket(showing, calculateTicketPriceWithAnyDiscount);
@@ -50,24 +56,24 @@ public class ReservationService implements ReservationServiceImpl {
      * there are four possible discounts:
      *      specialDiscount - 20% discount for special movie
      *      sequenceDiscount - $3 discount for 1st show or $2 discount for 2nd show
-     *      matineeDiscount
+     *      matineeDiscount - 25% discount for showing start times between 11am - 4pm
      *      dateDiscount - $1 discount for showings on the 7th of the month
      *
      * @param showing
      *
-     * Based on the requirements to discount ticket purchases between 11am - 4pm,
+     * Based on the requirements to discount ticket purchases for showing start times between 11am - 4pm,
      * the matinee discount time is defined by this window.
      * Seconds seemed unnecessarily granular so I omitted them.
      * If the showing is equal to the ends of the window, I gave them a discount.
      * I would usually double check the requirements with someone in product.
      * This ultimately means that you can have a ticket that starts at 4:00:59
      * and still get a discount.*/
-    private double getDiscount(Showing showing) {
+    private Money getDiscount(Showing showing) {
 
-        double specialDiscount = 0;
-        double sequenceDiscount = 0;
-        double matineeDiscount = 0;
-        double dateDiscount = 0;
+        Money specialDiscount = Money.of(0, USD);
+        Money sequenceDiscount = Money.of(0, USD);
+        Money matineeDiscount = Money.of(0, USD);
+        Money dateDiscount = Money.of(0, USD);
 
         int showSequence = showing.getSequenceOfTheDay();
         int dayOfMonth = showing.getStartTime().getDayOfMonth();
@@ -81,23 +87,28 @@ public class ReservationService implements ReservationServiceImpl {
 
         if ((showingStartTime.isAfter(matineeWindowStartTime) && showingStartTime.isBefore(matineeWindowCloseTime))
                 || (showingStartTime.equals(matineeWindowStartTime) || showingStartTime.equals(matineeWindowCloseTime))) {
-            matineeDiscount = showing.getMovieFee() * 0.25; // 25% discount for matinees
+            matineeDiscount = showing.getMovie().getTicketPrice().multiply(0.25);
         }
         if (7 == dayOfMonth) {
-            dateDiscount = 1;
+            dateDiscount = Money.of(1, USD);;
         }
         if (showing.getMovie().hasSpecialCode()) {
-            specialDiscount = showing.getMovieFee() * 0.2;
+            specialDiscount = showing.getMovie().getTicketPrice().multiply(0.2);
         }
         if (showSequence == 1) {
-            sequenceDiscount = 3;
+            sequenceDiscount = Money.of(3, USD);;
         } else if (showSequence == 2) {
-            sequenceDiscount = 2;
+            sequenceDiscount = Money.of(2, USD);;
         }
-        return Math.max(specialDiscount, Math.max(sequenceDiscount, Math.max( matineeDiscount, dateDiscount)));
+
+        //return Math.max(specialDiscount, Math.max(sequenceDiscount, Math.max(matineeDiscount, dateDiscount)));
+        Money matineeOrDateDiscount = matineeDiscount.isGreaterThan(dateDiscount)? matineeDiscount : dateDiscount;
+        Money sequenceDiscountOrSpecialDiscount = specialDiscount.isGreaterThan(sequenceDiscount)? specialDiscount : sequenceDiscount;
+        Money maxDiscount = matineeOrDateDiscount.isGreaterThan(sequenceDiscountOrSpecialDiscount)? matineeOrDateDiscount: sequenceDiscountOrSpecialDiscount;
+        return maxDiscount;
     }
 
-    public double getCalculatedDiscount(Showing showing) {
+    public Money getCalculatedDiscount(Showing showing) {
         return getDiscount(showing);
     }
 }

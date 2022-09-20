@@ -1,23 +1,27 @@
 package com.jpmc.theater.model;
 
+import org.javamoney.moneta.Money;
+
+import javax.money.CurrencyUnit;
+import javax.money.Monetary;
 import java.util.UUID;
 
 
 public class Ticket {
 
     private UUID ticketId;
-    private double priceChargedAfterAnyDiscounts;
+    private Money priceChargedAfterAnyDiscounts;
     private Showing showing;
 
-    public Ticket(Showing showing, double priceChargedAfterAnyDiscounts) {
+    public Ticket(Showing showing, Money priceChargedAfterAnyDiscounts) {
         this.showing = showing;
         this.priceChargedAfterAnyDiscounts = priceChargedAfterAnyDiscounts;
     }
 
-    public UUID createTicket(Showing showing, double ticketPrice) {
+    public UUID createTicket(Showing showing, Money priceChargedAfterAnyDiscounts) {
         this.ticketId = UUID.randomUUID();
         this.showing = showing;
-        this.priceChargedAfterAnyDiscounts = ticketPrice;
+        this.priceChargedAfterAnyDiscounts = priceChargedAfterAnyDiscounts;
 
         return ticketId;
     }
@@ -26,7 +30,7 @@ public class Ticket {
         return ticketId;
     }
 
-    public double getPriceChargedAfterAnyDiscounts() {
+    public Money getPriceChargedAfterAnyDiscounts() {
         return priceChargedAfterAnyDiscounts;
     }
 
@@ -34,4 +38,8 @@ public class Ticket {
         return showing;
     }
 
+//    private Money convertToDollars(double priceChargedAfterAnyDiscounts) {
+//        CurrencyUnit usd = Monetary.getCurrency("USD");
+//        return Money.of(priceChargedAfterAnyDiscounts, usd);
+//    }
 }
