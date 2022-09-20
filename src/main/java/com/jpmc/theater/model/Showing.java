@@ -1,4 +1,4 @@
-package com.jpmc.theater;
+package com.jpmc.theater.model;
 
 import java.time.LocalDateTime;
 
@@ -25,15 +25,8 @@ public class Showing {
         return this.sequenceOfTheDay == sequence;
     }
 
-    public double getMovieFee() {
-        return movie.getTicketPrice();
-    }
-
     public int getSequenceOfTheDay() {
         return sequenceOfTheDay;
     }
 
-    private double calculateFee(int audienceCount) {
-        return movie.calculateTicketPrice(this) * audienceCount;
-    }
 }

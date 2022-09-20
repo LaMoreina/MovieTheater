@@ -1,4 +1,4 @@
-package com.jpmc.theater;
+package com.jpmc.theater.model;
 
 import java.time.LocalDate;
 
