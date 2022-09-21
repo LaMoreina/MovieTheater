@@ -1,11 +1,5 @@
 package com.jpmc.theater.model;
 
-import com.jpmc.theater.model.Customer;
-import com.jpmc.theater.model.LocalDateProvider;
-import com.jpmc.theater.model.Reservation;
-import com.jpmc.theater.model.Theater;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TheaterTest {

@@ -1,9 +1,7 @@
 package com.jpmc.theater.model;
 
-import org.javamoney.moneta.Money;
+import org.joda.money.Money;
 
-import javax.money.CurrencyUnit;
-import javax.money.Monetary;
 import java.util.UUID;
 
 

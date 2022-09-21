@@ -1,20 +1,33 @@
 package com.jpmc.theater.service;
 
 import com.jpmc.theater.model.*;
-import org.javamoney.moneta.Money;
+import org.joda.money.CurrencyUnit;
+import org.joda.money.Money;
+import org.joda.money.MoneyUtils;
 
-import javax.money.CurrencyUnit;
-import javax.money.Monetary;
+import java.math.RoundingMode;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
 
 public class ReservationService {
     private Theater theater;
-    private static final CurrencyUnit USD = Monetary.getCurrency("USD");
+    private static final CurrencyUnit USD = CurrencyUnit.of("USD");
+    private Money calculatedDiscount = Money.of(USD, 0);
+    private Money discountedTicketPrice;
+
+    private Money zeroDollars = Money.of(USD, 0);
 
     public ReservationService(Theater theater){
         this.theater = theater;
+    }
+
+    public Money getCalculatedDiscount() {
+        return calculatedDiscount;
+    }
+
+    public Money getDiscountedTicketPrice() {
+        return discountedTicketPrice;
     }
 
     /**
@@ -35,16 +48,17 @@ public class ReservationService {
             Customer customer = new Customer(customerName);
 
             //calculate discount and make sure no negative balance occurs such that the theater never "owes" the customer money
-            Money calculateTicketPriceWithAnyDiscount = showing.getMovie().getTicketPrice().subtract(getDiscount(showing));
-            calculateTicketPriceWithAnyDiscount =
-                    (calculateTicketPriceWithAnyDiscount).isGreaterThanOrEqualTo(Money.of(0, USD)) ?
-                            calculateTicketPriceWithAnyDiscount : Money.of(0, USD);
+            calculatedDiscount = getDiscount(showing);
+            discountedTicketPrice = showing.getMovie().getFullPriceTicket().minus(calculatedDiscount);
+            discountedTicketPrice =
+                    (discountedTicketPrice).isGreaterThan(zeroDollars) ?
+                            discountedTicketPrice : zeroDollars;
 
             for (int i = 0; i < howManyTickets; i++) {
-                Ticket ticket = new Ticket(showing, calculateTicketPriceWithAnyDiscount);
+                Ticket ticket = new Ticket(showing, discountedTicketPrice);
                 reservationTickets.add(ticket);
             }
-            return new Reservation(customer, showing, reservationTickets);
+            return new Reservation(customer, showing, reservationTickets, discountedTicketPrice);
         }
         return null; //todo: update with error handling
     }
@@ -70,10 +84,10 @@ public class ReservationService {
      * and still get a discount.*/
     private Money getDiscount(Showing showing) {
 
-        Money specialDiscount = Money.of(0, USD);
-        Money sequenceDiscount = Money.of(0, USD);
-        Money matineeDiscount = Money.of(0, USD);
-        Money dateDiscount = Money.of(0, USD);
+        Money specialDiscount = zeroDollars;
+        Money sequenceDiscount = zeroDollars;
+        Money matineeDiscount = zeroDollars;
+        Money dateDiscount = zeroDollars;
 
         int showSequence = showing.getSequenceOfTheDay();
         int dayOfMonth = showing.getStartTime().getDayOfMonth();
@@ -87,28 +101,22 @@ public class ReservationService {
 
         if ((showingStartTime.isAfter(matineeWindowStartTime) && showingStartTime.isBefore(matineeWindowCloseTime))
                 || (showingStartTime.equals(matineeWindowStartTime) || showingStartTime.equals(matineeWindowCloseTime))) {
-            matineeDiscount = showing.getMovie().getTicketPrice().multiply(0.25);
+            matineeDiscount = showing.getMovie().getFullPriceTicket().multipliedBy(.25d, RoundingMode.DOWN);
+
         }
         if (7 == dayOfMonth) {
-            dateDiscount = Money.of(1, USD);;
+            dateDiscount = Money.of(USD, 1);
         }
         if (showing.getMovie().hasSpecialCode()) {
-            specialDiscount = showing.getMovie().getTicketPrice().multiply(0.2);
+            specialDiscount = showing.getMovie().getFullPriceTicket().multipliedBy(0.2d, RoundingMode.DOWN);
         }
-        if (showSequence == 1) {
-            sequenceDiscount = Money.of(3, USD);;
-        } else if (showSequence == 2) {
-            sequenceDiscount = Money.of(2, USD);;
+        if (showSequence == 0) {
+            sequenceDiscount = Money.of(USD, 3);
+        } else if (showSequence == 1) {
+            sequenceDiscount = Money.of(USD, 2);
         }
 
-        //return Math.max(specialDiscount, Math.max(sequenceDiscount, Math.max(matineeDiscount, dateDiscount)));
-        Money matineeOrDateDiscount = matineeDiscount.isGreaterThan(dateDiscount)? matineeDiscount : dateDiscount;
-        Money sequenceDiscountOrSpecialDiscount = specialDiscount.isGreaterThan(sequenceDiscount)? specialDiscount : sequenceDiscount;
-        Money maxDiscount = matineeOrDateDiscount.isGreaterThan(sequenceDiscountOrSpecialDiscount)? matineeOrDateDiscount: sequenceDiscountOrSpecialDiscount;
-        return maxDiscount;
+        return MoneyUtils.max(specialDiscount, MoneyUtils.max(sequenceDiscount, MoneyUtils.max(matineeDiscount, dateDiscount)));
     }
 
-    public Money getCalculatedDiscount(Showing showing) {
-        return getDiscount(showing);
-    }
 }
