@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.math.RoundingMode;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.List;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -32,6 +29,8 @@ class ReservationServiceTest {
     private Money testTicketPriceWithDateDiscount = testTicketPrice.minus(1d);
     private Money testTicketPriceWithSpecialDiscount = testTicketPrice.multipliedBy(0.8d, RoundingMode.DOWN);
 
+    private LocalDate SeventhOfMonth = LocalDate.of(1990, Month.AUGUST, 7);
+
     @BeforeAll
     public void setUp() {
         Movie spiderMan = new Movie("Spider-Man: No Way Home", "", Duration.ofMinutes(90), testTicketPrice, true);
@@ -47,7 +46,7 @@ class ReservationServiceTest {
                 new Showing(theBatMan, 6, LocalDateTime.of(LocalDate.now(), LocalTime.of(17, 50))),
                 new Showing(turningRed, 7, LocalDateTime.of(LocalDate.now(), LocalTime.of(19, 30))),
                 new Showing(spiderMan, 8, LocalDateTime.of(LocalDate.now(), LocalTime.of(21, 10))),
-                new Showing(theBatMan, 9, LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 0)))
+                new Showing(turningRed, 9, LocalDateTime.of(SeventhOfMonth, LocalTime.of(23, 0)))
             );
         theater = new Theater(schedule);
         reservationService = new ReservationService(theater);
@@ -89,18 +88,23 @@ class ReservationServiceTest {
         assertEquals(testTicketPriceWithSecondInSequenceDiscount.multipliedBy(howManyTickets), reservation.getTotalFee());
         assertEquals(customerName, reservation.getCustomer().getName());
     }
+    @Test
+    public void createReservationByShowNumber_seventhOfMonthOneTicket_DateDiscountApplied() {
+        int showNumber = 9; //This show is on the 7th of the month
+        int howManyTickets = 1;
 
+        Reservation reservation = reservationService.createReservationByShowNumber(customerName, showNumber, howManyTickets);
+
+        assertEquals(testTicketPriceWithDateDiscount, reservationService.getDiscountedTicketPrice());
+        assertEquals(howManyTickets, reservation.getTickets().size());
+        assertEquals(testTicketPriceWithDateDiscount.multipliedBy(howManyTickets), reservation.getTotalFee());
+        assertEquals(customerName, reservation.getCustomer().getName());
+    }
     @Test
     public void createReservationByShowNumber_firstMovieAndSpecialMovieExpensiveTicket_SpecialDiscountApplied() {
     }
-
-
-
-
     @Test
     public void getCalculatedDiscount_firstMovieAndSpecialMovieInexpensiveTicket_SequenceDiscountApplied() {
-        setUp();
-
     }
     @Test
     public void getCalculatedDiscount_secondMovieAndSpecialMovieInexpensiveTicket_SequenceDiscountApplied() {
