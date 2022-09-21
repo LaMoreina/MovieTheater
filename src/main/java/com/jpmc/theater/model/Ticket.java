@@ -8,8 +8,11 @@ import java.util.UUID;
 public class Ticket {
 
     private UUID ticketId;
-    private Money priceChargedAfterAnyDiscounts;
     private Showing showing;
+    private Money priceChargedAfterAnyDiscounts;
+    //todo: should a ticket contain info on which discount received or original movie pricing?
+    //private Money originalMoviePrice;
+    //DiscountType discountType?
 
     public Ticket(Showing showing, Money priceChargedAfterAnyDiscounts) {
         this.showing = showing;
@@ -36,8 +39,4 @@ public class Ticket {
         return showing;
     }
 
-//    private Money convertToDollars(double priceChargedAfterAnyDiscounts) {
-//        CurrencyUnit usd = Monetary.getCurrency("USD");
-//        return Money.of(priceChargedAfterAnyDiscounts, usd);
-//    }
 }

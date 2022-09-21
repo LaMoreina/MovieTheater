@@ -13,6 +13,8 @@ import java.math.RoundingMode;
 import java.time.*;
 import java.util.List;
 
+//todo: set up constant time instance vars to test
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ReservationServiceTest {
     private Theater theater;
