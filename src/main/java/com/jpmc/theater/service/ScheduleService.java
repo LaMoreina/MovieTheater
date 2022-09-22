@@ -35,7 +35,12 @@ public class ScheduleService {
                 printScheduleJSON();
             } else if (format.equalsIgnoreCase(ScheduleFormat.Enum.PLAINTEXT.toString())) {
                 printPlainTextScheduleToConsole();
+            } else if (!format.equalsIgnoreCase(ScheduleFormat.Enum.JSON.toString())
+                    && !format.equalsIgnoreCase(ScheduleFormat.Enum.PLAINTEXT.toString())) {
+                System.out.println("This is not a valid format");
             }
+        } else {
+            System.out.println("format input is null");
         }
     }
 

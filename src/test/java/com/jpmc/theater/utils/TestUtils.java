@@ -2,13 +2,10 @@ package com.jpmc.theater.utils;
 
 import com.jpmc.theater.model.*;
 import com.jpmc.theater.service.ReservationService;
-import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
-import java.math.RoundingMode;
 import java.time.*;
 import java.util.List;
-import java.util.UUID;
 
 import static org.joda.money.CurrencyUnit.USD;
 
@@ -64,5 +61,136 @@ public class TestUtils {
         Theater theater = new Theater(schedule);
         return new ReservationService(theater);
     }
-    
+    public Theater setUpTheater() {
+        Money testTicketFullPrice = Money.of(USD, 12.5);
+        LocalDate testDate = LocalDate.of(2004, Month.OCTOBER, 3);
+        LocalTime inMatineeWindow = LocalTime.of(13, 13);
+
+
+        Movie testMovie = new Movie("Mean Girls", "A girl goes to public high school.",
+                Duration.ofMinutes(90), testTicketFullPrice, false);
+
+        List<Showing> schedule = List.of(
+                new Showing(testMovie, 0, LocalDateTime.of(testDate, inMatineeWindow)),
+                new Showing(testMovie, 1, LocalDateTime.of(testDate, inMatineeWindow))
+        );
+        return new Theater(schedule);
+    }
+
+    public String setPlaintextSchedule() {
+        return LocalDate.now() + "\n" +
+                "===================================================\n" +
+                "0: 2004-10-03T13:13 Mean Girls (1 hour 30 minutes) $USD 12.50\n" +
+                "1: 2004-10-03T13:13 Mean Girls (1 hour 30 minutes) $USD 12.50\n" +
+                "===================================================";
+    }
+    public String setJsonSchedule() {
+        return "[ {\n" +
+                "  \"movie\" : {\n" +
+                "    \"title\" : \"Mean Girls\",\n" +
+                "    \"runningTime\" : {\n" +
+                "      \"seconds\" : 5400,\n" +
+                "      \"nano\" : 0,\n" +
+                "      \"units\" : [ \"SECONDS\", \"NANOS\" ],\n" +
+                "      \"negative\" : false,\n" +
+                "      \"zero\" : false\n" +
+                "    },\n" +
+                "    \"fullPriceTicket\" : {\n" +
+                "      \"negative\" : false,\n" +
+                "      \"zero\" : false,\n" +
+                "      \"positive\" : true,\n" +
+                "      \"currencyUnit\" : {\n" +
+                "        \"code\" : \"USD\",\n" +
+                "        \"numericCode\" : 840,\n" +
+                "        \"decimalPlaces\" : 2,\n" +
+                "        \"symbol\" : \"$\",\n" +
+                "        \"numeric3Code\" : \"840\",\n" +
+                "        \"countryCodes\" : [ \"PR\", \"MP\", \"IO\", \"FM\", \"PW\", \"GU\", \"BQ\", \"TC\", \"VG\", \"AS\", \"VI\", \"TL\", \"UM\", \"MH\", \"EC\", \"US\" ],\n" +
+                "        \"pseudoCurrency\" : false\n" +
+                "      },\n" +
+                "      \"scale\" : 2,\n" +
+                "      \"amount\" : 12.50,\n" +
+                "      \"amountMajor\" : 12,\n" +
+                "      \"amountMajorLong\" : 12,\n" +
+                "      \"amountMajorInt\" : 12,\n" +
+                "      \"amountMinor\" : 1250,\n" +
+                "      \"amountMinorLong\" : 1250,\n" +
+                "      \"amountMinorInt\" : 1250,\n" +
+                "      \"minorPart\" : 50,\n" +
+                "      \"positiveOrZero\" : true,\n" +
+                "      \"negativeOrZero\" : false\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"sequenceOfTheDay\" : 0,\n" +
+                "  \"startTime\" : {\n" +
+                "    \"nano\" : 0,\n" +
+                "    \"year\" : 2004,\n" +
+                "    \"monthValue\" : 10,\n" +
+                "    \"dayOfMonth\" : 3,\n" +
+                "    \"hour\" : 13,\n" +
+                "    \"minute\" : 13,\n" +
+                "    \"second\" : 0,\n" +
+                "    \"dayOfWeek\" : \"SUNDAY\",\n" +
+                "    \"dayOfYear\" : 277,\n" +
+                "    \"month\" : \"OCTOBER\",\n" +
+                "    \"chronology\" : {\n" +
+                "      \"id\" : \"ISO\",\n" +
+                "      \"calendarType\" : \"iso8601\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}, {\n" +
+                "  \"movie\" : {\n" +
+                "    \"title\" : \"Mean Girls\",\n" +
+                "    \"runningTime\" : {\n" +
+                "      \"seconds\" : 5400,\n" +
+                "      \"nano\" : 0,\n" +
+                "      \"units\" : [ \"SECONDS\", \"NANOS\" ],\n" +
+                "      \"negative\" : false,\n" +
+                "      \"zero\" : false\n" +
+                "    },\n" +
+                "    \"fullPriceTicket\" : {\n" +
+                "      \"negative\" : false,\n" +
+                "      \"zero\" : false,\n" +
+                "      \"positive\" : true,\n" +
+                "      \"currencyUnit\" : {\n" +
+                "        \"code\" : \"USD\",\n" +
+                "        \"numericCode\" : 840,\n" +
+                "        \"decimalPlaces\" : 2,\n" +
+                "        \"symbol\" : \"$\",\n" +
+                "        \"numeric3Code\" : \"840\",\n" +
+                "        \"countryCodes\" : [ \"PR\", \"MP\", \"IO\", \"FM\", \"PW\", \"GU\", \"BQ\", \"TC\", \"VG\", \"AS\", \"VI\", \"TL\", \"UM\", \"MH\", \"EC\", \"US\" ],\n" +
+                "        \"pseudoCurrency\" : false\n" +
+                "      },\n" +
+                "      \"scale\" : 2,\n" +
+                "      \"amount\" : 12.50,\n" +
+                "      \"amountMajor\" : 12,\n" +
+                "      \"amountMajorLong\" : 12,\n" +
+                "      \"amountMajorInt\" : 12,\n" +
+                "      \"amountMinor\" : 1250,\n" +
+                "      \"amountMinorLong\" : 1250,\n" +
+                "      \"amountMinorInt\" : 1250,\n" +
+                "      \"minorPart\" : 50,\n" +
+                "      \"positiveOrZero\" : true,\n" +
+                "      \"negativeOrZero\" : false\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"sequenceOfTheDay\" : 1,\n" +
+                "  \"startTime\" : {\n" +
+                "    \"nano\" : 0,\n" +
+                "    \"year\" : 2004,\n" +
+                "    \"monthValue\" : 10,\n" +
+                "    \"dayOfMonth\" : 3,\n" +
+                "    \"hour\" : 13,\n" +
+                "    \"minute\" : 13,\n" +
+                "    \"second\" : 0,\n" +
+                "    \"dayOfWeek\" : \"SUNDAY\",\n" +
+                "    \"dayOfYear\" : 277,\n" +
+                "    \"month\" : \"OCTOBER\",\n" +
+                "    \"chronology\" : {\n" +
+                "      \"id\" : \"ISO\",\n" +
+                "      \"calendarType\" : \"iso8601\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "} ]";
+    }
 }
