@@ -6,6 +6,7 @@ import org.joda.money.Money;
 import org.joda.money.MoneyUtils;
 
 import java.math.RoundingMode;
+import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -42,13 +43,12 @@ public class ReservationService {
 
     if (theater.getCurrentSeatingCapacity() - howManyTickets >= 0) {
       ArrayList<Ticket> reservationTickets = new ArrayList<>();
-      Showing showing = theater.getSchedule().get(showNumber);
       Customer customer = new Customer(customerName);
 
-      // calculate discount and make sure no negative balance occurs such that the theater never
-      // "owes" the customer money
+      Showing showing = theater.getSchedule().get(showNumber);
       calculatedDiscount = calculateHighestEligibleTicketDiscount(showing);
       discountedTicketPrice = showing.getMovie().getFullPriceTicket().minus(calculatedDiscount);
+      // make sure no negative balance occurs such that the theater never "owes" the customer money
       discountedTicketPrice =
           (discountedTicketPrice).isGreaterThan(zeroDollars) ? discountedTicketPrice : zeroDollars;
 
@@ -79,57 +79,77 @@ public class ReservationService {
    *     still get a discount.
    */
   private Money calculateHighestEligibleTicketDiscount(Showing showing) {
-
-    Money specialDiscount = zeroDollars;
-    Money sequenceDiscount = zeroDollars;
-    Money matineeDiscount = zeroDollars;
-    Money dateDiscount = zeroDollars;
-
     LocalTime showingStartTime = LocalTime.now();
     int dayOfMonth = -1;
-    int showSequence = -1;
 
     if (null != showing) {
       try {
-        showSequence = showing.getSequenceOfTheDay();
         dayOfMonth = showing.getStartTime().getDayOfMonth();
         int hourOfShowStart = showing.getStartTime().getHour();
         int minuteOfShowStart = showing.getStartTime().getMinute();
         showingStartTime = LocalTime.of(hourOfShowStart, minuteOfShowStart);
-      } catch (NullPointerException npe) {
+        }
+      catch (NullPointerException npe) {
         System.out.println("Please enter a showing with valid fields:" + npe.getMessage());
         return null;
-      } catch (Exception e) {
+      }
+      catch(DateTimeException dte) {
+        System.out.println("DateTimeFormattingException:" + dte.getMessage());
+        return null;
+      }
+      catch (Exception e) {
         System.out.println("Please enter a valid showing:" + e.getMessage());
         return null;
       }
+    } else {
+      throw new NullPointerException();
     }
 
-    LocalTime matineeWindowStartTime = LocalTime.of(11, 0);
-    LocalTime matineeWindowCloseTime = LocalTime.of(16, 0);
+    Money specialDiscount = getSpecialDiscount(showing);
+    Money sequenceDiscount = getSequenceDiscount(showing.getSequenceOfTheDay());
+    Money matineeDiscount = getMatineeDiscount(showingStartTime, showing.getMovie().getFullPriceTicket());
+    Money dateDiscount = getDateDiscount(dayOfMonth);
 
-    if ((showingStartTime.isAfter(matineeWindowStartTime)
-            && showingStartTime.isBefore(matineeWindowCloseTime))
-        || (showingStartTime.equals(matineeWindowStartTime)
-            || showingStartTime.equals(matineeWindowCloseTime))) {
-      matineeDiscount =
-          showing.getMovie().getFullPriceTicket().multipliedBy(.25d, RoundingMode.DOWN);
-    }
-    if (7 == dayOfMonth) {
-      dateDiscount = Money.of(USD, 1);
-    }
+    return MoneyUtils.max(
+        specialDiscount,
+        MoneyUtils.max(sequenceDiscount, MoneyUtils.max(matineeDiscount, dateDiscount)));
+  }
+
+  private Money getSpecialDiscount(Showing showing) {
+    Money specialDiscount = zeroDollars;
     if (null != showing.getMovie() && showing.getMovie().hasSpecialCode()) {
       specialDiscount =
           showing.getMovie().getFullPriceTicket().multipliedBy(0.2d, RoundingMode.DOWN);
     }
+    return specialDiscount;
+  }
+  private Money getSequenceDiscount(int showSequence) {
+    Money sequenceDiscount = zeroDollars;
     if (showSequence == 0) {
       sequenceDiscount = Money.of(USD, 3);
     } else if (showSequence == 1) {
       sequenceDiscount = Money.of(USD, 2);
     }
+    return sequenceDiscount;
+  }
+  private Money getMatineeDiscount(LocalTime showingStartTime, Money fullPriceTicket) {
+    Money matineeDiscount = zeroDollars;
+    LocalTime matineeWindowStartTime = LocalTime.of(11, 0);
+    LocalTime matineeWindowCloseTime = LocalTime.of(16, 0);
 
-    return MoneyUtils.max(
-        specialDiscount,
-        MoneyUtils.max(sequenceDiscount, MoneyUtils.max(matineeDiscount, dateDiscount)));
+    if ((showingStartTime.isAfter(matineeWindowStartTime)
+            && showingStartTime.isBefore(matineeWindowCloseTime))
+            || (showingStartTime.equals(matineeWindowStartTime)
+            || showingStartTime.equals(matineeWindowCloseTime))) {
+      matineeDiscount = fullPriceTicket.multipliedBy(.25d, RoundingMode.DOWN);
+    }
+    return matineeDiscount;
+  }
+  private Money getDateDiscount(int dayOfMonth) {
+    Money dateDiscount = zeroDollars;
+    if (7 == dayOfMonth) {
+      dateDiscount = Money.of(USD, 1);
+    }
+    return dateDiscount;
   }
 }
