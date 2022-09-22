@@ -8,7 +8,6 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -19,10 +18,9 @@ import java.util.List;
 
 public class TheaterApp {
     public static void main(String[] args) {
-        CurrencyUnit usd = CurrencyUnit.USD;
-        Movie spiderMan = new Movie("Spider-Man: No Way Home", "", Duration.ofMinutes(90), Money.of(usd, 12.5), true);
-        Movie turningRed = new Movie("Turning Red","",  Duration.ofMinutes(85), Money.of(usd, 11), false);
-        Movie theBatMan = new Movie("The Batman", "", Duration.ofMinutes(95), Money.of(usd, 9), false);
+        Movie spiderMan = new Movie("Spider-Man: No Way Home", "", Duration.ofMinutes(90), Money.of(CurrencyUnit.USD, 12.5), true);
+        Movie turningRed = new Movie("Turning Red","",  Duration.ofMinutes(85), Money.of(CurrencyUnit.USD, 11), false);
+        Movie theBatMan = new Movie("The Batman", "", Duration.ofMinutes(95), Money.of(CurrencyUnit.USD, 9), false);
         List<Showing> schedule = new ArrayList<>();
         schedule = List.of(
                 new Showing(turningRed, 1, LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 0))),
@@ -38,12 +36,6 @@ public class TheaterApp {
         Theater theater = new Theater(schedule);
         ScheduleService scheduleService = new ScheduleService(theater);
         BufferedReader reader  = new BufferedReader(new InputStreamReader((System.in)));
-        System.out.println("Enter desired schedule format (JSON, PLAINTEXT)");
-        try {
-            String outputFormat = reader.readLine();
-            scheduleService.printScheduleWithFormat(outputFormat);
-        } catch(IOException e) {
-            e.getMessage();
-        }
+        scheduleService.getConsoleInputForPrintingSchedule();
     }
 }

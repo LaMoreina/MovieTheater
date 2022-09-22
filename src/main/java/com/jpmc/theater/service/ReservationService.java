@@ -15,6 +15,7 @@ public class ReservationService {
     private static final CurrencyUnit USD = CurrencyUnit.of("USD");
     private Money calculatedDiscount = Money.of(USD, 0);
     private Money discountedTicketPrice;
+    private int numberOfAvailableSeats = Theater.getCurrentSeatingCapacity();
 
     private Money zeroDollars = Money.of(USD, 0);
 
@@ -28,6 +29,10 @@ public class ReservationService {
 
     public Money getDiscountedTicketPrice() {
         return discountedTicketPrice;
+    }
+
+    public int getNumberOfAvailableSeats() {
+        return numberOfAvailableSeats;
     }
 
     /**
@@ -48,7 +53,7 @@ public class ReservationService {
             Customer customer = new Customer(customerName);
 
             //calculate discount and make sure no negative balance occurs such that the theater never "owes" the customer money
-            calculatedDiscount = getDiscount(showing);
+            calculatedDiscount = calculateHighestEligibleTicketDiscount(showing);
             discountedTicketPrice = showing.getMovie().getFullPriceTicket().minus(calculatedDiscount);
             discountedTicketPrice =
                     (discountedTicketPrice).isGreaterThan(zeroDollars) ?
@@ -58,6 +63,8 @@ public class ReservationService {
                 Ticket ticket = new Ticket(showing, discountedTicketPrice);
                 reservationTickets.add(ticket);
             }
+            numberOfAvailableSeats = numberOfAvailableSeats - howManyTickets;
+            Theater.setCurrentSeatingCapacity(numberOfAvailableSeats);
             return new Reservation(customer, showing, reservationTickets, discountedTicketPrice);
         }
         return null; //todo: update with error handling
@@ -82,19 +89,32 @@ public class ReservationService {
      * I would usually double check the requirements with someone in product.
      * This ultimately means that you can have a ticket that starts at 4:00:59
      * and still get a discount.*/
-    private Money getDiscount(Showing showing) {
+    private Money calculateHighestEligibleTicketDiscount(Showing showing) {
 
         Money specialDiscount = zeroDollars;
         Money sequenceDiscount = zeroDollars;
         Money matineeDiscount = zeroDollars;
         Money dateDiscount = zeroDollars;
 
-        int showSequence = showing.getSequenceOfTheDay();
-        int dayOfMonth = showing.getStartTime().getDayOfMonth();
+        LocalTime showingStartTime = LocalTime.now();
+        int dayOfMonth = -1;
+        int showSequence = -1;
 
-        int hourOfShowStart = showing.getStartTime().getHour();
-        int minuteOfShowStart = showing.getStartTime().getMinute();
-        LocalTime showingStartTime = LocalTime.of(hourOfShowStart, minuteOfShowStart);
+        if (null != showing) {
+            try {
+                showSequence = showing.getSequenceOfTheDay();
+                dayOfMonth = showing.getStartTime().getDayOfMonth();
+                int hourOfShowStart = showing.getStartTime().getHour();
+                int minuteOfShowStart = showing.getStartTime().getMinute();
+                showingStartTime = LocalTime.of(hourOfShowStart, minuteOfShowStart);
+            } catch (NullPointerException npe) {
+                System.out.println("Please enter a valid showing: /n" + npe.getMessage());
+                return null;
+            } catch (Exception e) {
+                System.out.println("Please enter a valid showing: /n" + e.getMessage());
+                return null;
+            }
+        }
 
         LocalTime matineeWindowStartTime = LocalTime.of(11, 0);
         LocalTime matineeWindowCloseTime = LocalTime.of(16, 0);
@@ -107,7 +127,7 @@ public class ReservationService {
         if (7 == dayOfMonth) {
             dateDiscount = Money.of(USD, 1);
         }
-        if (showing.getMovie().hasSpecialCode()) {
+        if (null != showing.getMovie() && showing.getMovie().hasSpecialCode()) {
             specialDiscount = showing.getMovie().getFullPriceTicket().multipliedBy(0.2d, RoundingMode.DOWN);
         }
         if (showSequence == 0) {

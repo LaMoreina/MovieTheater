@@ -21,10 +21,6 @@ public class Showing {
         return showStartTime;
     }
 
-    public boolean isSequence(int sequence) {
-        return this.sequenceOfTheDay == sequence;
-    }
-
     public int getSequenceOfTheDay() {
         return sequenceOfTheDay;
     }

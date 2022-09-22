@@ -30,20 +30,37 @@ public class ScheduleService {
         }
     }
 
+    public void getConsoleInputForPrintingSchedule() {
+        BufferedReader reader  = new BufferedReader(new InputStreamReader((System.in)));
+        System.out.println("Enter desired schedule format (JSON, PLAINTEXT)");
+        try {
+            String outputFormat = reader.readLine();
+            this.printScheduleWithFormat(outputFormat);
+        } catch(IOException e) {
+            e.getMessage();
+        }
+    }
     public void printScheduleWithFormat(String format) {
-        if(format.equalsIgnoreCase(ScheduleFormat.Enum.JSON.toString())) {
-            printScheduleJSON();
-        } else if (format.equalsIgnoreCase(ScheduleFormat.Enum.PLAINTEXT.toString())) {
-            printPlainTextScheduleToConsole();
+        if (null != format) {
+            if (format.equalsIgnoreCase(ScheduleFormat.Enum.JSON.toString())) {
+                printScheduleJSON();
+            } else if (format.equalsIgnoreCase(ScheduleFormat.Enum.PLAINTEXT.toString())) {
+                printPlainTextScheduleToConsole();
+            }
         }
     }
 
     private void printPlainTextScheduleToConsole() {
         System.out.println(LocalDate.now());
         System.out.println("===================================================");
-        theater.getSchedule().forEach(s ->
-                System.out.println(s.getSequenceOfTheDay() + ": " + s.getStartTime() + " " + s.getMovie().getTitle() + " " + humanReadableFormat(s.getMovie().getRunningTime()) + " $" + s.getMovie().getFullPriceTicket())
-        );
+        try {
+            theater.getSchedule().forEach(s ->
+                    System.out.println(s.getSequenceOfTheDay() + ": " + s.getStartTime() + " " + s.getMovie().getTitle() + " " + humanReadableFormat(s.getMovie().getRunningTime()) + " $" + s.getMovie().getFullPriceTicket())
+            );
+        }
+        catch (NullPointerException npe) {
+            System.out.println(npe.getMessage());
+        }
         System.out.println("===================================================");
     }
 
