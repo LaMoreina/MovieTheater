@@ -31,6 +31,10 @@ public class ReservationService {
         return discountedTicketPrice;
     }
 
+    public int getNumberOfAvailableSeats() {
+        return numberOfAvailableSeats;
+    }
+
     /**
      * Method to create a reservation by the show number--its index within the list of showings that comprise the schedule.
      * If the theater does not have enough seating available to reserve the amount requested, the method currently returns null.
@@ -49,7 +53,7 @@ public class ReservationService {
             Customer customer = new Customer(customerName);
 
             //calculate discount and make sure no negative balance occurs such that the theater never "owes" the customer money
-            calculatedDiscount = getDiscount(showing);
+            calculatedDiscount = calculateHighestEligibleTicketDiscount(showing);
             discountedTicketPrice = showing.getMovie().getFullPriceTicket().minus(calculatedDiscount);
             discountedTicketPrice =
                     (discountedTicketPrice).isGreaterThan(zeroDollars) ?
@@ -85,7 +89,7 @@ public class ReservationService {
      * I would usually double check the requirements with someone in product.
      * This ultimately means that you can have a ticket that starts at 4:00:59
      * and still get a discount.*/
-    private Money getDiscount(Showing showing) {
+    private Money calculateHighestEligibleTicketDiscount(Showing showing) {
 
         Money specialDiscount = zeroDollars;
         Money sequenceDiscount = zeroDollars;
