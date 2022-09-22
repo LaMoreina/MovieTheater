@@ -1,0 +1,107 @@
+[ {
+  "movie" : {
+    "title" : "Mean Girls",
+    "runningTime" : {
+      "seconds" : 5400,
+      "nano" : 0,
+      "units" : [ "SECONDS", "NANOS" ],
+      "negative" : false,
+      "zero" : false
+    },
+    "fullPriceTicket" : {
+      "negative" : false,
+      "zero" : false,
+      "positive" : true,
+      "currencyUnit" : {
+        "code" : "USD",
+        "numericCode" : 840,
+        "decimalPlaces" : 2,
+        "symbol" : "$",
+        "numeric3Code" : "840",
+        "countryCodes" : [ "PR", "MP", "IO", "FM", "PW", "GU", "BQ", "TC", "VG", "AS", "VI", "TL", "UM", "MH", "EC", "US" ],
+        "pseudoCurrency" : false
+      },
+      "scale" : 2,
+      "amount" : 12.50,
+      "amountMajor" : 12,
+      "amountMajorLong" : 12,
+      "amountMajorInt" : 12,
+      "amountMinor" : 1250,
+      "amountMinorLong" : 1250,
+      "amountMinorInt" : 1250,
+      "minorPart" : 50,
+      "positiveOrZero" : true,
+      "negativeOrZero" : false
+    }
+  },
+  "sequenceOfTheDay" : 0,
+  "startTime" : {
+    "nano" : 0,
+    "year" : 2004,
+    "monthValue" : 10,
+    "dayOfMonth" : 3,
+    "hour" : 13,
+    "minute" : 13,
+    "second" : 0,
+    "dayOfWeek" : "SUNDAY",
+    "dayOfYear" : 277,
+    "month" : "OCTOBER",
+    "chronology" : {
+      "id" : "ISO",
+      "calendarType" : "iso8601"
+    }
+  }
+}, {
+  "movie" : {
+    "title" : "Mean Girls",
+    "runningTime" : {
+      "seconds" : 5400,
+      "nano" : 0,
+      "units" : [ "SECONDS", "NANOS" ],
+      "negative" : false,
+      "zero" : false
+    },
+    "fullPriceTicket" : {
+      "negative" : false,
+      "zero" : false,
+      "positive" : true,
+      "currencyUnit" : {
+        "code" : "USD",
+        "numericCode" : 840,
+        "decimalPlaces" : 2,
+        "symbol" : "$",
+        "numeric3Code" : "840",
+        "countryCodes" : [ "PR", "MP", "IO", "FM", "PW", "GU", "BQ", "TC", "VG", "AS", "VI", "TL", "UM", "MH", "EC", "US" ],
+        "pseudoCurrency" : false
+      },
+      "scale" : 2,
+      "amount" : 12.50,
+      "amountMajor" : 12,
+      "amountMajorLong" : 12,
+      "amountMajorInt" : 12,
+      "amountMinor" : 1250,
+      "amountMinorLong" : 1250,
+      "amountMinorInt" : 1250,
+      "minorPart" : 50,
+      "positiveOrZero" : true,
+      "negativeOrZero" : false
+    }
+  },
+  "sequenceOfTheDay" : 1,
+  "startTime" : {
+    "nano" : 0,
+    "year" : 2004,
+    "monthValue" : 10,
+    "dayOfMonth" : 3,
+    "hour" : 13,
+    "minute" : 13,
+    "second" : 0,
+    "dayOfWeek" : "SUNDAY",
+    "dayOfYear" : 277,
+    "month" : "OCTOBER",
+    "chronology" : {
+      "id" : "ISO",
+      "calendarType" : "iso8601"
+    }
+  }
+} ]
