@@ -23,16 +23,8 @@ public class ReservationService {
         this.theater = theater;
     }
 
-    public Money getCalculatedDiscount() {
-        return calculatedDiscount;
-    }
-
     public Money getDiscountedTicketPrice() {
         return discountedTicketPrice;
-    }
-
-    public int getNumberOfAvailableSeats() {
-        return numberOfAvailableSeats;
     }
 
     /**
@@ -67,7 +59,7 @@ public class ReservationService {
             Theater.setCurrentSeatingCapacity(numberOfAvailableSeats);
             return new Reservation(customer, showing, reservationTickets, discountedTicketPrice);
         }
-        return null; //todo: update with error handling
+        return null; //todo: update with custom error?
     }
 
 
@@ -108,10 +100,10 @@ public class ReservationService {
                 int minuteOfShowStart = showing.getStartTime().getMinute();
                 showingStartTime = LocalTime.of(hourOfShowStart, minuteOfShowStart);
             } catch (NullPointerException npe) {
-                System.out.println("Please enter a valid showing: /n" + npe.getMessage());
+                System.out.println("Please enter a showing with valid fields:" + npe.getMessage());
                 return null;
             } catch (Exception e) {
-                System.out.println("Please enter a valid showing: /n" + e.getMessage());
+                System.out.println("Please enter a valid showing:" + e.getMessage());
                 return null;
             }
         }

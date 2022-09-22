@@ -19,17 +19,6 @@ public class ScheduleService {
         this.theater = theater;
     }
 
-    //todo: implement fully?  Is this scope creep?
-    public void createSchedule() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
-        System.out.println("Enter Movie details: ");
-        try {
-            String movieParameters = reader.readLine();
-        } catch (IOException e) {
-            e.getMessage();
-        }
-    }
-
     public void getConsoleInputForPrintingSchedule() {
         BufferedReader reader  = new BufferedReader(new InputStreamReader((System.in)));
         System.out.println("Enter desired schedule format (JSON, PLAINTEXT)");

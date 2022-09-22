@@ -16,10 +16,6 @@ public class Theater {
         return schedule;
     }
 
-    public void setSchedule(List<Showing> schedule) {
-        this.schedule = schedule;
-    }
-
     public static int getCurrentSeatingCapacity() {
         return currentSeatingCapacity;
     }

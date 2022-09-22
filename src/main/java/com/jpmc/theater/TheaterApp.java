@@ -7,8 +7,6 @@ import com.jpmc.theater.service.ScheduleService;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,7 +33,6 @@ public class TheaterApp {
         );
         Theater theater = new Theater(schedule);
         ScheduleService scheduleService = new ScheduleService(theater);
-        BufferedReader reader  = new BufferedReader(new InputStreamReader((System.in)));
         scheduleService.getConsoleInputForPrintingSchedule();
     }
 }
