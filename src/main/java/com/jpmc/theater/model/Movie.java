@@ -50,8 +50,4 @@ public class Movie {
                 && Objects.equals(specialCode, movie.specialCode);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, description, runningTime, fullPriceTicket, specialCode);
-    }
 }
